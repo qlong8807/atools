@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinAndroid)
 }
 
 android {
@@ -30,7 +29,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(libs.versions.android.jvm.get())
+        jvmTarget.set(JvmTarget.fromTarget(libs.versions.android.jvm.get()))
     }
 }
 
