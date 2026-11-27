@@ -23,5 +23,9 @@
     <string name="invalid_input">Please enter positive integers</string>
     <string name="tts_ready">Voice ready</string>
     <string name="tts_unavailable">Chinese voice not available</string>
+    <string name="tts_initializing">Initializing voice…</string>
+    <string name="tts_test">Test voice</string>
+    <string name="tts_test_text">Voice test, countdown is ready</string>
+    <string name="tts_unavailable_hint">No Chinese voice data found. Install a TTS voice pack in system settings.</string>
     <string name="announce_round_complete">Round %1$d of %2$d seconds completed</string>
 </resources>

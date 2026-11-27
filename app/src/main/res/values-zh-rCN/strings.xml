@@ -23,5 +23,9 @@
     <string name="invalid_input">请输入正整数</string>
     <string name="tts_ready">语音就绪</string>
     <string name="tts_unavailable">系统无中文语音包</string>
+    <string name="tts_initializing">语音初始化中…</string>
+    <string name="tts_test">测试语音</string>
+    <string name="tts_test_text">语音测试，倒计时准备就绪</string>
+    <string name="tts_unavailable_hint">未检测到中文语音包，请在系统设置中安装 TTS 语音数据</string>
     <string name="announce_round_complete">第 %1$d 个 %2$d 秒已完成</string>
 </resources>

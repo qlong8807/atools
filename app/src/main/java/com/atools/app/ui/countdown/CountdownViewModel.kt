@@ -2,6 +2,7 @@ package com.atools.app.ui.countdown
 
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,12 +15,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicInteger
 
 enum class CountdownPhase {
     IDLE,
     WORK,
     REST,
     FINISHED,
+}
+
+enum class TtsStatus {
+    INITIALIZING,
+    READY,
+    UNAVAILABLE,
 }
 
 data class CountdownUiState(
@@ -31,42 +39,93 @@ data class CountdownUiState(
     val remainingSeconds: Int = 0,
     val isRunning: Boolean = false,
     val isPaused: Boolean = false,
-    val ttsReady: Boolean = false,
+    val ttsStatus: TtsStatus = TtsStatus.INITIALIZING,
     val messageRes: Int? = null,
 )
 
 /**
  * Wraps Android TextToSpeech with Chinese locale.
+ * On Android 11+ the app must declare a queries entry for TTS_SERVICE, otherwise
+ * the engine fails to bind and every speak() is silently dropped.
  */
 class SpeechHelper(
     context: Context,
-    onReady: (Boolean) -> Unit,
+    onStatus: (TtsStatus) -> Unit,
 ) {
     private var tts: TextToSpeech? = null
     private var ready = false
+    private var pendingText: String? = null
+    private val utteranceId = AtomicInteger(0)
 
     init {
-        tts = TextToSpeech(context.applicationContext) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                val result = tts?.setLanguage(Locale.CHINESE)
-                ready = result != TextToSpeech.LANG_MISSING_DATA &&
-                    result != TextToSpeech.LANG_NOT_SUPPORTED
-            } else {
-                ready = false
+        val appContext = context.applicationContext
+        try {
+            tts = TextToSpeech(appContext) { status ->
+                if (status != TextToSpeech.SUCCESS) {
+                    ready = false
+                    onStatus(TtsStatus.UNAVAILABLE)
+                    return@TextToSpeech
+                }
+                val engine = tts
+                if (engine == null) {
+                    ready = false
+                    onStatus(TtsStatus.UNAVAILABLE)
+                    return@TextToSpeech
+                }
+                var result = engine.setLanguage(Locale.SIMPLIFIED_CHINESE)
+                if (isUnsupported(result)) {
+                    result = engine.setLanguage(Locale.CHINESE)
+                }
+                ready = !isUnsupported(result)
+                if (ready) {
+                    engine.setSpeechRate(1.0f)
+                    engine.setPitch(1.0f)
+                    onStatus(TtsStatus.READY)
+                    pendingText?.let { text ->
+                        speakInternal(engine, text)
+                        pendingText = null
+                    }
+                } else {
+                    onStatus(TtsStatus.UNAVAILABLE)
+                }
             }
-            onReady(ready)
+        } catch (_: Exception) {
+            ready = false
+            onStatus(TtsStatus.UNAVAILABLE)
         }
     }
 
+    private fun isUnsupported(result: Int): Boolean =
+        result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED
+
+    private fun speakInternal(engine: TextToSpeech, text: String): Int {
+        val params = Bundle().apply {
+            putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f)
+        }
+        return engine.speak(
+            text,
+            TextToSpeech.QUEUE_FLUSH,
+            params,
+            "atools-tts-${utteranceId.incrementAndGet()}",
+        )
+    }
+
     fun speak(text: String) {
-        if (ready) {
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "atools-countdown")
+        val engine = tts
+        if (!ready || engine == null) {
+            // Countdown may start before TTS init finishes; replay once ready.
+            pendingText = text
+            return
+        }
+        if (speakInternal(engine, text) != TextToSpeech.SUCCESS) {
+            pendingText = text
         }
     }
 
     fun shutdown() {
         tts?.shutdown()
         tts = null
+        ready = false
     }
 }
 
@@ -76,13 +135,8 @@ class CountdownViewModel(
     private val _uiState = MutableStateFlow(CountdownUiState())
     val uiState: StateFlow<CountdownUiState> = _uiState.asStateFlow()
 
-    private val speech = SpeechHelper(application) { ready ->
-        _uiState.update {
-            it.copy(
-                ttsReady = ready,
-                messageRes = if (ready) R.string.tts_ready else R.string.tts_unavailable,
-            )
-        }
+    private val speech = SpeechHelper(application) { status ->
+        _uiState.update { it.copy(ttsStatus = status) }
     }
 
     private var job: Job? = null
@@ -101,6 +155,10 @@ class CountdownViewModel(
 
     fun onMessageShown() {
         _uiState.update { it.copy(messageRes = null) }
+    }
+
+    fun testVoice() {
+        speech.speak(getApplication<Application>().getString(R.string.tts_test_text))
     }
 
     fun start() {

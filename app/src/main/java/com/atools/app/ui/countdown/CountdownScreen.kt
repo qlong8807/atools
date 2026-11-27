@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.atools.app.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun CountdownScreen(
@@ -44,7 +45,7 @@ fun CountdownScreen(
 
     uiState.messageRes?.let { resId ->
         LaunchedEffect(resId) {
-            // Message is transient; clear it after composition settles.
+            delay(3000L)
             viewModel.onMessageShown()
         }
         Snackbar(modifier = Modifier.padding(8.dp)) {
@@ -65,6 +66,31 @@ fun CountdownScreen(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
         )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            val statusText = when (uiState.ttsStatus) {
+                TtsStatus.INITIALIZING -> context.getString(R.string.tts_initializing)
+                TtsStatus.READY -> context.getString(R.string.tts_ready)
+                TtsStatus.UNAVAILABLE -> context.getString(R.string.tts_unavailable_hint)
+            }
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.bodySmall,
+                color = if (uiState.ttsStatus == TtsStatus.UNAVAILABLE) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+                modifier = Modifier.weight(1f),
+            )
+            OutlinedButton(onClick = viewModel::testVoice) {
+                Text(context.getString(R.string.tts_test))
+            }
+        }
 
         Card(
             modifier = Modifier.fillMaxWidth(),
