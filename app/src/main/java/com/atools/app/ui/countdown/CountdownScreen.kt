@@ -13,6 +13,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Switch
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -100,13 +102,28 @@ fun CountdownScreen(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = context.getString(R.string.label_infinite),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Switch(
+                        checked = uiState.isInfinite,
+                        onCheckedChange = viewModel::onInfiniteChange,
+                        enabled = !uiState.isRunning,
+                    )
+                }
                 OutlinedTextField(
                     value = uiState.repeatCount,
                     onValueChange = viewModel::onRepeatCountChange,
                     label = { Text(context.getString(R.string.label_repeat_count)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
-                    enabled = !uiState.isRunning,
+                    enabled = !uiState.isRunning && !uiState.isInfinite,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
@@ -118,6 +135,20 @@ fun CountdownScreen(
                     enabled = !uiState.isRunning,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    listOf("30", "60", "90", "120").forEach { seconds ->
+                        FilterChip(
+                            selected = uiState.workSeconds == seconds,
+                            onClick = { viewModel.onWorkSecondsChange(seconds) },
+                            label = { Text("$seconds s") },
+                            enabled = !uiState.isRunning,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
                 OutlinedTextField(
                     value = uiState.restSeconds,
                     onValueChange = viewModel::onRestSecondsChange,
@@ -163,12 +194,17 @@ fun CountdownScreen(
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 if (uiState.currentRound > 0) {
-                    Text(
-                        text = context.getString(
+                    val roundText = if (uiState.isInfinite) {
+                        context.getString(R.string.round_info_infinite, uiState.currentRound)
+                    } else {
+                        context.getString(
                             R.string.round_info,
                             uiState.currentRound,
                             uiState.repeatCount.toIntOrNull() ?: uiState.currentRound,
-                        ),
+                        )
+                    }
+                    Text(
+                        text = roundText,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )

@@ -15,6 +15,8 @@
     <string name="resume">Resume</string>
     <string name="stop_reset">Stop &amp; Reset</string>
     <string name="round_info">Round %1$d / %2$d</string>
+    <string name="round_info_infinite">Round %1$d (infinite)</string>
+    <string name="label_infinite">Infinite rounds</string>
     <string name="phase_work">Working</string>
     <string name="phase_rest">Resting</string>
     <string name="phase_idle">Ready</string>
@@ -27,5 +29,5 @@
     <string name="tts_test">Test voice</string>
     <string name="tts_test_text">Voice test, countdown is ready</string>
     <string name="tts_unavailable_hint">No Chinese voice data found. Install a TTS voice pack in system settings.</string>
-    <string name="announce_round_complete">Round %1$d of %2$d seconds completed</string>
+    <string name="announce_round_complete">Round %1$d, %2$d seconds completed</string>
 </resources>

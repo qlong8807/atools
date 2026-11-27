@@ -32,7 +32,8 @@ enum class TtsStatus {
 
 data class CountdownUiState(
     val repeatCount: String = "3",
-    val workSeconds: String = "60",
+    val isInfinite: Boolean = true,
+    val workSeconds: String = "30",
     val restSeconds: String = "10",
     val phase: CountdownPhase = CountdownPhase.IDLE,
     val currentRound: Int = 0,
@@ -145,6 +146,10 @@ class CountdownViewModel(
         _uiState.update { it.copy(repeatCount = value) }
     }
 
+    fun onInfiniteChange(value: Boolean) {
+        _uiState.update { it.copy(isInfinite = value) }
+    }
+
     fun onWorkSecondsChange(value: String) {
         _uiState.update { it.copy(workSeconds = value) }
     }
@@ -163,7 +168,7 @@ class CountdownViewModel(
 
     fun start() {
         val state = _uiState.value
-        val count = state.repeatCount.toIntOrNull()
+        val count = if (state.isInfinite) Int.MAX_VALUE else state.repeatCount.toIntOrNull()
         val work = state.workSeconds.toIntOrNull()
         val rest = state.restSeconds.toIntOrNull()
         if (count == null || count <= 0 || work == null || work <= 0 || rest == null || rest <= 0) {

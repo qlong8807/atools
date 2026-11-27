@@ -15,6 +15,8 @@
     <string name="resume">继续</string>
     <string name="stop_reset">停止重置</string>
     <string name="round_info">第 %1$d / %2$d 轮</string>
+    <string name="round_info_infinite">第 %1$d 轮（无限）</string>
+    <string name="label_infinite">无限轮数</string>
     <string name="phase_work">工作中</string>
     <string name="phase_rest">休息中</string>
     <string name="phase_idle">就绪</string>
@@ -27,5 +29,5 @@
     <string name="tts_test">测试语音</string>
     <string name="tts_test_text">语音测试，倒计时准备就绪</string>
     <string name="tts_unavailable_hint">未检测到中文语音包，请在系统设置中安装 TTS 语音数据</string>
-    <string name="announce_round_complete">第 %1$d 个 %2$d 秒已完成</string>
+    <string name="announce_round_complete">第 %1$d 轮 %2$d 秒已完成</string>
 </resources>
