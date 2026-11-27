@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">A 工具箱</string>
+    <string name="tab_countdown">倒计时</string>
+    <string name="tab_tools">工具</string>
+    <string name="tab_settings">设置</string>
+    <string name="coming_soon">敬请期待</string>
+
+    <string name="countdown_title">重复倒计时</string>
+    <string name="label_repeat_count">重复次数 (N)</string>
+    <string name="label_work_seconds">工作秒数 (M)</string>
+    <string name="label_rest_seconds">休息秒数 (X)</string>
+    <string name="start">开始</string>
+    <string name="pause">暂停</string>
+    <string name="resume">继续</string>
+    <string name="stop_reset">停止重置</string>
+    <string name="round_info">第 %1$d / %2$d 轮</string>
+    <string name="phase_work">工作中</string>
+    <string name="phase_rest">休息中</string>
+    <string name="phase_idle">就绪</string>
+    <string name="phase_finished">已完成</string>
+    <string name="time_format">%1$02d:%2$02d</string>
+    <string name="invalid_input">请输入正整数</string>
+    <string name="tts_ready">语音就绪</string>
+    <string name="tts_unavailable">系统无中文语音包</string>
+    <string name="announce_round_complete">第 %1$d 个 %2$d 秒已完成</string>
+</resources>

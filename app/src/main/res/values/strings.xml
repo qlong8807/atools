@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">A Tools</string>
+    <string name="tab_countdown">Countdown</string>
+    <string name="tab_tools">Tools</string>
+    <string name="tab_settings">Settings</string>
+    <string name="coming_soon">Coming soon</string>
+
+    <string name="countdown_title">Repeat Countdown</string>
+    <string name="label_repeat_count">Times (N)</string>
+    <string name="label_work_seconds">Work seconds (M)</string>
+    <string name="label_rest_seconds">Rest seconds (X)</string>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="stop_reset">Stop &amp; Reset</string>
+    <string name="round_info">Round %1$d / %2$d</string>
+    <string name="phase_work">Working</string>
+    <string name="phase_rest">Resting</string>
+    <string name="phase_idle">Ready</string>
+    <string name="phase_finished">Finished</string>
+    <string name="time_format">%1$02d:%2$02d</string>
+    <string name="invalid_input">Please enter positive integers</string>
+    <string name="tts_ready">Voice ready</string>
+    <string name="tts_unavailable">Chinese voice not available</string>
+    <string name="announce_round_complete">Round %1$d of %2$d seconds completed</string>
+</resources>
